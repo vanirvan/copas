@@ -9,7 +9,11 @@ export function AuthButtons() {
         <UserButton />
       </SignedIn>
       <SignedOut>
-        <SignInButton mode="modal">
+        <SignInButton
+          mode="modal"
+          fallbackRedirectUrl={process.env.NEXT_PUBLIC_APP_URL!}
+          signUpFallbackRedirectUrl={process.env.NEXT_PUBLIC_APP_URL!}
+        >
           <Button size={"sm"}>Signin</Button>
         </SignInButton>
       </SignedOut>
