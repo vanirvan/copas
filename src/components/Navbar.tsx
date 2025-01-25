@@ -2,6 +2,7 @@ import { GithubIcon } from "lucide-react";
 import Link from "next/link";
 
 import { AuthButtons } from "@/components/AuthButtons";
+import { ToggleThemeButton } from "@/components/ToggleThemeButton";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
@@ -12,19 +13,21 @@ export function Navbar() {
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
         <Link href="/">
-          <h1 className="text-2xl font-bold">COPAS</h1>
+          <h1 className="text-2xl font-bold transition-all duration-200 hover:tracking-widest">
+            COPAS
+          </h1>
         </Link>
         <div className="flex items-center gap-4">
           <Link href={"https://github.com/vanirvan/Copas"}>
             <Button
               size={"icon"}
               variant={"outline"}
-              className="hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+              className="border-none hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
             >
               <GithubIcon size={16} />
             </Button>
           </Link>
-          {/* <ToggleThemeButton /> */}
+          <ToggleThemeButton />
           <AuthButtons />
         </div>
       </div>
