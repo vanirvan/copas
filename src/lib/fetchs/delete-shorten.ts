@@ -5,7 +5,7 @@ export async function deleteShorten({
   original_url: string;
   short_url: string;
 }): Promise<{ message: string } | { error: string }> {
-  return await fetch("http://localhost:3000/api/shorten", {
+  return await fetch(new URL("/api/shorten", process.env.NEXT_PUBLIC_APP_URL), {
     method: "DELETE",
     body: JSON.stringify({
       original_url,
