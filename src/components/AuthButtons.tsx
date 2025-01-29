@@ -1,12 +1,23 @@
+"use client";
+
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+
+import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 
 export function AuthButtons() {
+  const { theme } = useTheme();
+
   return (
     <>
       <SignedIn>
-        <UserButton />
+        <UserButton
+          appearance={{
+            baseTheme: theme === "dark" ? dark : undefined,
+          }}
+        />
       </SignedIn>
       <SignedOut>
         <SignInButton
