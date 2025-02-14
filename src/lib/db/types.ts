@@ -71,6 +71,35 @@ export type Database = {
         }
         Relationships: []
       }
+      views: {
+        Row: {
+          created_at: string
+          id: number
+          ip: string
+          shorten_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          ip: string
+          shorten_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          ip?: string
+          shorten_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "views_shorten_id_fkey"
+            columns: ["shorten_id"]
+            isOneToOne: false
+            referencedRelation: "shortens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
