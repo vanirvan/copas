@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, CopyIcon, GlobeIcon, TrashIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, GlobeIcon, TrashIcon, EyeIcon } from "lucide-react";
 import { useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 
@@ -23,10 +23,12 @@ import { Button, buttonVariants } from "./ui/button";
 export function ShortenCard({
   original_url,
   short_url,
+  visitor_count,
   deleteFn,
 }: {
   original_url: string;
   short_url: string;
+  visitor_count?: number,
   deleteFn: ({
     original_url,
     short_url,
@@ -53,6 +55,12 @@ export function ShortenCard({
           {original_url}
         </CardDescription>
       </CardHeader>
+      { visitor_count !== undefined && 
+        <div className="flex items-center gap-2 px-6">
+          <EyeIcon size={16} />
+          <span>{visitor_count}</span>
+        </div>
+      }
       <CardFooter className="flex items-center justify-end gap-2 pt-0">
         <TooltipProvider>
           <Tooltip>

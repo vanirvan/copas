@@ -4,6 +4,7 @@ export type SuccessGetShortenAPIResponse = {
     original_url: string;
     short_url: string;
     created_at: string;
+    visitor_count: number;
   }[];
 };
 

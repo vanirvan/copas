@@ -140,6 +140,7 @@ export function ShortenLists({ user }: { user: string | null }) {
                   key={key}
                   original_url={url.original_url}
                   short_url={url.short_url}
+                  visitor_count={url.visitor_count}
                   deleteFn={handleDeleteUrl}
                 />
               ))}

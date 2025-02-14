@@ -37,10 +37,23 @@ export async function GET() {
       );
     }
 
+      // const { data: urls, error: urlsError } = await supabase
+      //   .from("shortens")
+      //   .select("*")
+      //   .eq("user_id", user_id);
+
     const { data: urls, error: urlsError } = await supabase
       .from("shortens")
-      .select("*")
-      .eq("user_id", user_id);
+      .select("*, visitor_count:views(count)")
+      .eq("user_id", user_id)
+      .returns<{
+        alias: string;
+        created_at: string;
+        id: number;
+        updated_at: string;
+        url: string;
+        visitor_count: { count: number }[];
+      }[]>();
 
     if (urlsError) {
       return returnGETError500(urlsError);
@@ -53,6 +66,7 @@ export async function GET() {
           original_url: url.url,
           short_url: url.alias,
           created_at: url.created_at,
+          visitor_count: url.visitor_count[0]?.count || 0,
         };
       }),
     });
