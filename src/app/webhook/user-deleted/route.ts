@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-
-import { supabase } from "@/lib/db/supabase";
+import db from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 import { UserDeletedWebhook } from "@/lib/types/webhook";
 import { isValidWebhookType } from "@/lib/utils/invalid-webhook-type";
+import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const webhookPayload: UserDeletedWebhook = await request.json();
@@ -13,23 +14,12 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { error } = await supabase
-      .from("users")
-      .delete()
-      .eq("user_id", webhookPayload.data.id);
-
-    if (error) {
-      console.error(error);
-      return NextResponse.json(
-        { message: "Error Deleting user" },
-        { status: 500 },
-      );
-    }
+    await db.delete(users).where(eq(users.user_id, webhookPayload.data.id));
   } catch (e: unknown) {
     console.error(e);
     return NextResponse.json(
       { message: "Error Deleting user" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 
