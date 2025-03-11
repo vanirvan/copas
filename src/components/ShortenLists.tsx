@@ -87,13 +87,24 @@ export function ShortenLists({ user }: { user: string | null }) {
     // [user, urls, mutation]
   }, [user, localUrls, bulkInsertMutation]);
 
+  const [showSheetUrlLists, setShowSheetUrlLists] = useState(false);
+
+  useEffect(() => {
+    if(!user && localUrls.length > 0) {
+      setShowSheetUrlLists(true);
+    }
+
+    if(user && data && "data" in data && data.data.length > 0){
+      setShowSheetUrlLists(true);
+    }
+  }, [user, localUrls, data])
+
   return (
     <>
       <Sheet>
-        <SheetTrigger asChild>
-          {/* only appear when one or more urls are stored, wether in local or cloud after signed in */}
-          {(!user && localUrls.length > 0) ||
-          (user && data && "data" in data && data.data.length > 0) ? (
+        {/* only appear when one or more urls are stored, wether in local or cloud after signed in */}
+        {showSheetUrlLists && (
+          <SheetTrigger asChild>
             <div className="fixed bottom-6 right-6 w-max">
               <div className="relative">
                 <Button
@@ -105,8 +116,8 @@ export function ShortenLists({ user }: { user: string | null }) {
                 </Button>
               </div>
             </div>
-          ) : null}
-        </SheetTrigger>
+          </SheetTrigger>
+        )}
         <SheetContent className="overflow-y-auto">
           <SheetHeader>
             <SheetTitle>{user ? "" : "You're not Signed In!"}</SheetTitle>
