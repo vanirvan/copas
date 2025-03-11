@@ -1,6 +1,8 @@
+import { and, desc, eq, gte } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-import { supabase } from "@/lib/db/supabase";
+import db from "@/lib/db/db";
+import { shortens, views } from "@/lib/db/schema";
 
 export async function GET(
   req: NextRequest,
@@ -9,51 +11,38 @@ export async function GET(
   const alias = (await params).shorten;
 
   try {
-    const { data, error } = await supabase
-      .from("shortens")
-      .select("*")
-      .eq("alias", alias)
-      .single();
+    const data = await db
+      .select()
+      .from(shortens)
+      .where(eq(shortens.alias, alias))
+      .orderBy(desc(shortens.created_at))
+      .limit(1);
 
-    if (error) {
-      console.error(error);
-      return NextResponse.json(
-        {
-          error: "Something went wrong with our server. Please try again later",
-        },
-        { status: 500 },
-      );
-    }
-
-    if (!data) {
+    if (!data.length) {
       return NextResponse.json({ error: "Url not found" }, { status: 404 });
     }
 
     const ip = req.headers.get("x-forwarded-for");
 
     if (ip) {
-      // check if the particular ip address has already visiting this url for the past 24 hours
-      const { data: views } = await supabase
-        .from("views")
-        .select("id")
-        .eq("ip", ip)
-        .eq("shorten_id", data.id)
-        .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000))
-        .single();
+      const viewsRecord = await db
+        .select()
+        .from(views)
+        .where(
+          and(
+            eq(views.ip, ip),
+            eq(views.shorten_id, data[0].id),
+            gte(views.created_at, new Date(Date.now() - 24 * 60 * 60 * 1000)),
+          )
+        )
+        .limit(1);
 
-      if(views){
-        const { error: viewError } = await supabase.from("views").insert({
-          ip,
-          shorten_id: data.id
-        })
-  
-        if (viewError) {
-          console.error(viewError);
-        }
+      if (!viewsRecord[0]) {
+        await db.insert(views).values({ ip, shorten_id: data[0].id });
       }
     }
 
-    return NextResponse.redirect(data.url);
+    return NextResponse.redirect(data[0].url);
   } catch (e) {
     console.error(e);
     return NextResponse.json(
