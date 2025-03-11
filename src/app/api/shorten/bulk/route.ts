@@ -1,59 +1,41 @@
 import { auth } from "@clerk/nextjs/server";
-
 import { NextRequest, NextResponse } from "next/server";
-
-import { supabase } from "@/lib/db/supabase";
+import db from "@/lib/db/db";
+import { users, shortens } from "@/lib/db/schema";
+import { eq, inArray } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   const { data }: { data: { original_url: string; short_url: string }[] } =
     await req.json();
 
   try {
-    // find user first
+    // Find user first
     const { userId } = await auth();
 
-    let user_id: number | null = null;
-
-    if (userId) {
-      const { data: getUser, error: getUserError } = await supabase
-        .from("users")
-        .select("id")
-        .eq("user_id", userId)
-        .single();
-
-      if (getUserError) {
-        return returnPOSTError500(getUserError);
-      }
-
-      if (getUser) {
-        user_id = getUser.id;
-      }
-    }
-
-    if (!user_id) {
+    if (!userId) {
       return NextResponse.json(
-        {
-          error: "You are not logged in, please login to continue.",
-        },
-        { status: 401 },
+        { error: "You are not logged in, please login to continue." },
+        { status: 401 }
       );
     }
 
-    const { error: bulkError } = await supabase
-      .from("shortens")
-      .update({ user_id: user_id })
-      .in(
-        "alias",
-        data.map((d) => d.short_url),
-      );
+    // Get the user's ID from the database
+    const userRecord = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.user_id, userId))
+      .limit(1);
 
-    if (bulkError) {
-      return returnPOSTError500(bulkError);
+    if (userRecord.length === 0) {
+      return returnPOSTError500("User not found.");
     }
 
-    return NextResponse.json({
-      message: "success",
-    });
+    const user_id = userRecord[0].id;
+
+    // Perform bulk insert using Drizzle
+    await db.update(shortens).set({ user_id: user_id }).where(inArray(shortens.alias, data.map(d => d.short_url)));
+    
+    return NextResponse.json({ message: "Success" });
   } catch (e) {
     return returnPOSTError500(e);
   }
@@ -62,9 +44,7 @@ export async function POST(req: NextRequest) {
 function returnPOSTError500(error: unknown) {
   console.error(error);
   return NextResponse.json(
-    {
-      error: "Something went wrong with our server, please try again later.",
-    },
-    { status: 500 },
+    { error: "Something went wrong with our server, please try again later." },
+    { status: 500 }
   );
 }

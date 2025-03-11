@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-import { supabase } from "../db/supabase";
+import db from "@/lib/db/db";
+import { shortens } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 const allowedCharRegex = /^[a-zA-Z0-9-_]+$/;
 
@@ -16,16 +18,10 @@ const urlValidationSchema = z.object({
     })
     .refine(
       async (alias) => {
-        const { data } = await supabase
-          .from("shortens")
-          .select("alias")
-          .eq("alias", alias)
-          .single();
-
-        // if data is null, then alias is not taken, which is allowed
-        return !data;
+        const data = await db.select().from(shortens).where(eq(shortens.alias, alias)).limit(1);
+        return !data.length;
       },
-      { message: "already taken, please choose another one" },
+      { message: "already taken, please choose another one" }, 
     ),
 });
 
