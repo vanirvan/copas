@@ -23,7 +23,9 @@ export function AuthButtons() {
         <SignInButton
           mode="modal"
           fallbackRedirectUrl={process.env.NEXT_PUBLIC_APP_URL!}
+          forceRedirectUrl={process.env.NEXT_PUBLIC_APP_URL!}
           signUpFallbackRedirectUrl={process.env.NEXT_PUBLIC_APP_URL!}
+          signUpForceRedirectUrl={process.env.NEXT_PUBLIC_APP_URL!}
         >
           <Button size={"sm"}>Signin</Button>
         </SignInButton>
