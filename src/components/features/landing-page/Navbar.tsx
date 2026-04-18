@@ -14,6 +14,8 @@ export function Navbar() {
       </Link>
       <a
         href="https://github.com/vanirvan/copas"
+        target="_blank"
+        rel="noopener noreferrer"
         className={cn(buttonVariants({ variant: "ghost" }))}
       >
         <Github />
