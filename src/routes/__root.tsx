@@ -18,7 +18,38 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "Copas",
+        title: "Copas | Shorten your URLs with ease",
+      },
+      {
+        name: "description",
+        content:
+          "Fast, reliable, and privacy-focused URL shortener. No ads, no sign up, no bullshit. Just shorten and go.",
+      },
+      {
+        property: "og:title",
+        content: "Copas | Shorten your URLs with ease",
+      },
+      {
+        property: "og:description",
+        content:
+          "Fast, reliable, and privacy-focused URL shortener. No ads, no sign up, no bullshit.",
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:title",
+        content: "Copas | Shorten your URLs with ease",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Fast, reliable, and privacy-focused URL shortener. No ads, no sign up, no bullshit.",
       },
     ],
     links: [
