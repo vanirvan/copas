@@ -67,8 +67,6 @@ export function HeroSection() {
       // Dispatch event to notify other components (like RecentLinksSection)
       window.dispatchEvent(new Event("links_updated"));
 
-      console.log("Shortened URL result stored:", result);
-
       // Clear inputs on success
       setInputs({ url: "", alias: "" });
     } catch (error) {
