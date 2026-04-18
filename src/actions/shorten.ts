@@ -1,15 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { urlSchema } from "#/lib/validations/url-validation";
-import { nanoid } from "nanoid";
 import { db } from "#/lib/db";
 import { links, type NewLink } from "#/lib/db/schema";
 
 export const shortenUrl = createServerFn({ method: "POST" })
   .inputValidator(urlSchema)
   .handler(async ({ data }) => {
-    // // Fallback to nanoid if alias is empty string
+    // Fallback to a random 8-character ID if alias is empty
     const alias =
-      data.alias && data.alias.trim() !== "" ? data.alias : nanoid(8);
+      data.alias && data.alias.trim() !== ""
+        ? data.alias
+        : crypto.randomUUID().split("-")[0];
 
     const newlink: NewLink = {
       url: data.url,
